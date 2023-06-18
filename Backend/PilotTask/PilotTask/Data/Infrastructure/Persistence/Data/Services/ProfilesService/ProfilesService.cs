@@ -29,12 +29,12 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesService:CreateProfile] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesService:CreateProfile] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
 
-        public async Task<Profiles?> UpdateProfile(int profileId, ProfileModel profile)
+        public async Task<bool?> UpdateProfile(int profileId, ProfileModel profile)
         {
             try
             {
@@ -45,12 +45,12 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesService:UpdateProfile] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesService:UpdateProfile] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
 
-        public async Task<Profiles?> DeleteProfile(int profileId)
+        public async Task<bool?> DeleteProfile(int profileId)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesService:DeleteProfile] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesService:DeleteProfile] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -77,7 +77,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesService:RetriveProfiles] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesService:RetriveProfiles] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -93,7 +93,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesService:RetriveProfiles:profileId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesService:RetriveProfiles:profileId] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }

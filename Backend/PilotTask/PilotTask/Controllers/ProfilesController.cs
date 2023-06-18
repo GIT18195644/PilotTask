@@ -1,5 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MassTransit.Mediator;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PilotTask.Data.Application.Commands.Profiles.CreateProfiles;
+using PilotTask.Data.Application.Commands.Profiles.DeleteProfiles;
+using PilotTask.Data.Application.Commands.Profiles.UpdateProfiles;
+using PilotTask.Data.Application.Queries.Profiles.GetProfiles;
+using PilotTask.Data.Application.Queries.Profiles.GetProfilesByProfileId;
+using PilotTask.Data.Application.Queries.Tasks.GetTasksByProfileId;
 using PilotTask.Data.Entities;
 using PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IServices.IProfilesService;
 using PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IServices.ITasksService;
@@ -17,12 +24,14 @@ namespace PilotTask.Controllers
         private readonly ILogger<ProfilesController> logger;
         private readonly IProfilesService profilesService;
         private readonly ITasksService tasksService;
+        private readonly IMediator mediator;
 
-        public ProfilesController(ILogger<ProfilesController> logger, IProfilesService profilesService, ITasksService tasksService)
+        public ProfilesController(ILogger<ProfilesController> logger, IProfilesService profilesService, ITasksService tasksService, IMediator mediator)
         {
             this.logger = logger;
             this.profilesService = profilesService;
             this.tasksService = tasksService;
+            this.mediator = mediator;
         }
 
         [HttpGet]
@@ -30,23 +39,21 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.profilesService.RetriveProfiles();
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<GetProfilesQuery>();
+                var response = await client.GetResponse<ResponseWrapper<GetProfilesResponse>>(new GetProfilesQuery {});
+
+                if (response.Message.Succeeded)
                 {
-                    var response = new GetProfilesViewModel
-                    {
-                        Profiles = (result.Count > 0) ? result.ToList() : new List<Profiles>()
-                    };
-                    return Ok(ResponseWrapper<GetProfilesViewModel>.Success("Profiles get successfully", response));
+                    return Ok(response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<GetProfilesViewModel>.Fail("Failed to get profiles details"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesController:GetProfiles] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesController:GetProfiles] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<GetProfilesViewModel>.Fail(ex.Message));
             }
         }
@@ -56,23 +63,23 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.profilesService.RetriveProfiles(profileId);
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<GetProfilesByProfileIdQuery>();
+                var response = await client.GetResponse<ResponseWrapper<GetProfilesByProfileIdResponse>>(new GetProfilesByProfileIdQuery {
+                    ProfileId = profileId
+                });
+
+                if (response.Message.Succeeded)
                 {
-                    var response = new GetProfilesByProfileIdViewModel
-                    {
-                        Profile = result
-                    };
-                    return Ok(ResponseWrapper<GetProfilesByProfileIdViewModel>.Success("Profile get successfully", response));
+                    return Ok(response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<GetProfilesByProfileIdViewModel>.Fail("Failed to get profile details"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesController:GetProfilesByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesController:GetProfilesByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<GetProfilesByProfileIdViewModel>.Fail(ex.Message));
             }
         }
@@ -82,23 +89,28 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.profilesService.CreateProfile(profile);
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<CreateProfilesCommand>();
+                var response = await client.GetResponse<ResponseWrapper<CreateProfilesResponse>>(new CreateProfilesCommand
                 {
-                    var response = new CreateProfileViewModel
-                    {
-                        Profile = result
-                    };
-                    return Created("", ResponseWrapper<CreateProfileViewModel>.Success("Profile created successfully", response));
+                    FirstName = profile.FirstName,
+                    LastName = profile.LastName,
+                    EmailId = profile.EmailId,
+                    PhoneNumber = profile.PhoneNumber,
+                    DateOfBirth = profile.DateOfBirth
+                });
+
+                if (response.Message.Succeeded)
+                {
+                    return Created(response.Message.Message, response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<CreateProfileViewModel>.Fail("Failed to create profile"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesController:CreateProfiles] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesController:CreateProfiles] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<CreateProfileViewModel>.Fail(ex.Message));
             }
         }
@@ -108,23 +120,29 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.profilesService.UpdateProfile(profileId, profile);
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<UpdateProfilesCommand>();
+                var response = await client.GetResponse<ResponseWrapper<UpdateProfilesResponse>>(new UpdateProfilesCommand
                 {
-                    var response = new UpdateProfileViewModel
-                    {
-                        Profile = result
-                    };
-                    return Ok(ResponseWrapper<UpdateProfileViewModel>.Success("Profile updated successfully", response));
+                    ProfileId = profileId,
+                    FirstName = profile.FirstName,
+                    LastName = profile.LastName,
+                    EmailId = profile.EmailId,
+                    PhoneNumber = profile.PhoneNumber,
+                    DateOfBirth = profile.DateOfBirth
+                });
+
+                if (response.Message.Succeeded)
+                {
+                    return Ok(response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<UpdateProfileViewModel>.Fail("Failed to update profile"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesController:UpdateProfiles] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesController:UpdateProfiles] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ex.Message);
             }
         }
@@ -134,23 +152,24 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.profilesService.DeleteProfile(profileId);
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<DeleteProfilesCommand>();
+                var response = await client.GetResponse<ResponseWrapper<DeleteProfilesResponse>>(new DeleteProfilesCommand
                 {
-                    var response = new DeleteProfileViewModel
-                    {
-                        Profile = result
-                    };
-                    return Ok(ResponseWrapper<DeleteProfileViewModel>.Success("Profile deleted successfully", response));
+                    ProfileId = profileId
+                });
+
+                if (response.Message.Succeeded)
+                {
+                    return Ok(response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<DeleteProfileViewModel>.Fail("Failed to delete profile"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesController:DeleteProfiles] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesController:DeleteProfiles] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ex.Message);
             }
         }
@@ -160,23 +179,24 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.tasksService.RetriveTasksByProfileId(profileId);
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<GetTasksByProfileIdQuery>();
+                var response = await client.GetResponse<ResponseWrapper<GetTasksByProfileIdResponse>>(new GetTasksByProfileIdQuery
                 {
-                    var response = new GetTasksViewModel
-                    {
-                        Tasks = (result.Count > 0) ? result.ToList() : new List<Tasks>()
-                    };
-                    return Ok(ResponseWrapper<GetTasksViewModel>.Success("Tasks get successfully", response));
+                    ProfileId = profileId
+                });
+
+                if (response.Message.Succeeded)
+                {
+                    return Ok(response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<GetTasksViewModel>.Fail("Failed to get tasks details"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesController:GetTasksByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesController:GetTasksByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<GetTasksViewModel>.Fail(ex.Message));
             }
         }

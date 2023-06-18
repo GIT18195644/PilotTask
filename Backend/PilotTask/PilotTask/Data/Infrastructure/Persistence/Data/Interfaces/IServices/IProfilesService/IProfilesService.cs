@@ -7,9 +7,9 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IServices.IP
     {
         public Task<Profiles?> CreateProfile(ProfileModel profile);
 
-        public Task<Profiles?> UpdateProfile(int profileId, ProfileModel profile);
+        public Task<bool?> UpdateProfile(int profileId, ProfileModel profile);
 
-        public Task<Profiles?> DeleteProfile(int profileId);
+        public Task<bool?> DeleteProfile(int profileId);
 
         public Task<List<Profiles>?> RetriveProfiles();
 

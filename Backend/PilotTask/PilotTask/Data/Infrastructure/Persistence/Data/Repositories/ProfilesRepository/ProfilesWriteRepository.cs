@@ -14,12 +14,14 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.ProfilesRe
         private ILogger<ProfilesWriteRepository> logger;
         private readonly PilotTaskDbContext ctx;
         private readonly IConfiguration configuration;
+        private readonly IProfilesReadRepository profilesReadRepository;
 
-        public ProfilesWriteRepository(DbContextOptions options, ILogger<ProfilesWriteRepository> logger, PilotTaskDbContext ctx, IConfiguration configuration) : base(options)
+        public ProfilesWriteRepository(DbContextOptions options, ILogger<ProfilesWriteRepository> logger, PilotTaskDbContext ctx, IConfiguration configuration, IProfilesReadRepository profilesReadRepository) : base(options)
         {
             this.logger = logger;
             this.ctx = ctx;
             this.configuration = configuration;
+            this.profilesReadRepository = profilesReadRepository;
         }
 
         public async Task<Profiles?> CreateProfileDataAsync(ProfileModel profile)
@@ -60,30 +62,19 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.ProfilesRe
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesWriteRepository:CreateProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesWriteRepository:CreateProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
 
-        public async Task<Profiles?> DeleteProfileDataAsync(int profileId)
+        public async Task<bool?> DeleteProfileDataAsync(int profileId)
         {
             try
             {
                 this.logger.LogInformation($"[ProfilesWriteRepository:DeleteProfileDataAsync] Event Received");
 
-                var res = (from p in ctx.Profiles
-                         where p.ProfileId == profileId
-                         select new Profiles
-                         {
-                             ProfileId = p.ProfileId,
-                             FirstName = p.FirstName,
-                             LastName = p.LastName,
-                             DateOfBirth = p.DateOfBirth,
-                             PhoneNumber = p.PhoneNumber,
-                             EmailId = p.EmailId
-                         }).FirstOrDefault();
-
-                if (res != null)
+                var profile = await this.profilesReadRepository.GetProfileDataAsync(profileId);
+                if (profile != null)
                 {
                     using (SqlConnection connection = new SqlConnection(this.configuration["ConnectionStrings:Connection"]))
                     {
@@ -100,40 +91,39 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.ProfilesRe
                         }
                     }
 
-                    return res;
+                    return true;
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesWriteRepository:DeleteProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesWriteRepository:DeleteProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
 
-        public async Task<Profiles?> UpdateProfileDataAsync(int profileId, ProfileModel profile)
+        public async Task<bool?> UpdateProfileDataAsync(int profileId, ProfileModel profile)
         {
             try
             {
                 this.logger.LogInformation($"[ProfilesWriteRepository:UpdateProfileDataAsync] Event Received");
-
-                var res = (from p in ctx.Profiles
-                           where p.ProfileId == profileId
-                           select new Profiles
-                           {
-                               ProfileId = p.ProfileId,
-                               FirstName = (string.IsNullOrEmpty(profile.FirstName)) ? "" : profile.FirstName.Trim(),
-                               LastName = (string.IsNullOrEmpty(profile.LastName)) ? "" : profile.LastName.Trim(),
-                               DateOfBirth = profile.DateOfBirth,
-                               PhoneNumber = (string.IsNullOrEmpty(profile.PhoneNumber)) ? "" : profile.PhoneNumber.Trim(),
-                               EmailId = (string.IsNullOrEmpty(profile.EmailId)) ? "" : profile.EmailId.Trim().ToLower()
-                           }).FirstOrDefault();
-
+                
+                var res = await this.profilesReadRepository.GetProfileDataAsync(profileId);
                 if (res != null)
                 {
+                    res = new Profiles
+                    {
+                        ProfileId = profileId,
+                        FirstName = (string.IsNullOrEmpty(profile.FirstName)) ? "" : profile.FirstName.Trim(),
+                        LastName = (string.IsNullOrEmpty(profile.LastName)) ? "" : profile.LastName.Trim(),
+                        DateOfBirth = profile.DateOfBirth,
+                        PhoneNumber = (string.IsNullOrEmpty(profile.PhoneNumber)) ? "" : profile.PhoneNumber.Trim(),
+                        EmailId = (string.IsNullOrEmpty(profile.EmailId)) ? "" : profile.EmailId.Trim().ToLower()
+                    };
+
                     using (SqlConnection connection = new SqlConnection(configuration["ConnectionStrings:Connection"]))
                     {
                         connection.Open();
@@ -154,16 +144,16 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.ProfilesRe
                         }
                     }
 
-                    return res;
+                    return true;
                 }
                 else
                 {
-                    return null;
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesWriteRepository:UpdateProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesWriteRepository:UpdateProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }

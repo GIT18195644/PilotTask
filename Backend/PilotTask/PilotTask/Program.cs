@@ -20,10 +20,17 @@ try
 
     // Add services to the container.
     builder.Services.AddControllers();
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
+
     builder.Services.AddSwaggerGen();
+
+    builder.Services.AddHttpContextAccessor();
+
     builder.Services.AddPilotTaskServices(builder.Configuration, builder.Environment);
+
+    builder.Services.AddMassTransitComponents(builder.Configuration);
 
     var app = builder.Build();
 
@@ -34,11 +41,15 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UseForwardedHeaders();
+
     app.UseHttpsRedirection();
 
     app.UseAuthorization();
 
     app.MapControllers();
+
+    app.UseRouting();
 
     app.Run();
 

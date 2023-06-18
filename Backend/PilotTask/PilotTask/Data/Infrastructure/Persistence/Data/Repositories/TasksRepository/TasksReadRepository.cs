@@ -27,11 +27,43 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.TasksRepos
             {
                 this.logger.LogInformation($"[TasksReadRepository:GetTaskDataAsync] Event Received");
 
-                return new List<Tasks>();
+                var res = new List<Tasks>();
+
+                using (SqlConnection connection = new SqlConnection(this.configuration["ConnectionStrings:Connection"]))
+                {
+                    connection.Open();
+
+                    var storedProcedureName = "GetTasksDataAsync";
+
+                    using (SqlCommand command = new SqlCommand(storedProcedureName, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var task = new Tasks
+                                {
+                                    Id = reader.GetInt32(0),
+                                    ProfileId = reader.GetInt32(1),
+                                    TaskName = reader.GetString(2),
+                                    TaskDescription = reader.GetString(3),
+                                    StartTime = reader.GetDateTime(4),
+                                    Status = reader.GetInt32(5)
+                                };
+
+                                res.Add(task);
+                            }
+                        }
+                    }
+                }
+
+                return (res != null && res.Count > 0) ? res.ToList() : new List<Tasks>();
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksReadRepository:GetTaskDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksReadRepository:GetTaskDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -42,11 +74,42 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.TasksRepos
             {
                 this.logger.LogInformation($"[TasksReadRepository:GetTaskDataAsync:taskId] Event Received");
 
-                return new Tasks();
+                var res = new Tasks();
+
+                using (SqlConnection connection = new SqlConnection(this.configuration["ConnectionStrings:Connection"]))
+                {
+                    connection.Open();
+
+                    var storedProcedureName = "GetTasksByIdDataAsync";
+
+                    using (SqlCommand command = new SqlCommand(storedProcedureName, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@TaskId", taskId);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                res = new Tasks
+                                {
+                                    Id = reader.GetInt32(0),
+                                    ProfileId = reader.GetInt32(1),
+                                    TaskName = reader.GetString(2),
+                                    TaskDescription = reader.GetString(3),
+                                    StartTime = reader.GetDateTime(4),
+                                    Status = reader.GetInt32(5)
+                                };
+                            }
+                        }
+                    }
+                }
+
+                return res;
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksReadRepository:GetTaskDataAsync:taskId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksReadRepository:GetTaskDataAsync:taskId] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -94,7 +157,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.TasksRepos
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksReadRepository:GetTaskByProfileIdDataAsync:taskId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksReadRepository:GetTaskByProfileIdDataAsync:taskId] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }

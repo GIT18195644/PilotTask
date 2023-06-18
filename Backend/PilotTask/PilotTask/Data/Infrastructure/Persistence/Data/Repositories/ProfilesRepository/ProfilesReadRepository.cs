@@ -62,7 +62,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.ProfilesRe
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesReadRepository:GetProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesReadRepository:GetProfileDataAsync] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -108,7 +108,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.ProfilesRe
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesReadRepository:GetProfileDataAsync:ProfileId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesReadRepository:GetProfileDataAsync:ProfileId] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -161,7 +161,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Repositories.ProfilesRe
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[ProfilesReadRepository:GetProfileDataAsync:EmailId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[ProfilesReadRepository:GetProfileDataAsync:EmailId] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }

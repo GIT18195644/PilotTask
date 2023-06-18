@@ -7,9 +7,9 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IServices.IT
     {
         public Task<Tasks?> CreateTask(TaskModel task);
         
-        public Task<Tasks?> UpdateTask(int taskId, TaskModel task);
+        public Task<bool?> UpdateTask(int taskId, TaskModel task);
 
-        public Task<Tasks?> DeleteTask(int taskId);
+        public Task<bool?> DeleteTask(int taskId);
 
         public Task<List<Tasks>?> RetriveTasks();
         

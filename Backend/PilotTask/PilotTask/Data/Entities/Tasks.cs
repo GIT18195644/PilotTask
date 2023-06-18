@@ -6,18 +6,18 @@ namespace PilotTask.Data.Entities
     public class Tasks
     {
         [Key]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
-        public int ProfileId { get; set; }
-
-        [Column(TypeName = "VARCHAR(1000)")]
-        public string TaskName { get; set; }
+        public int? ProfileId { get; set; }
 
         [Column(TypeName = "VARCHAR(1000)")]
-        public string TaskDescription { get; set; }
+        public string? TaskName { get; set; }
 
-        public DateTime StartTime { get; set; }
+        [Column(TypeName = "VARCHAR(1000)")]
+        public string? TaskDescription { get; set; }
 
-        public int Status { get; set; }
+        public DateTime? StartTime { get; set; }
+
+        public int? Status { get; set; }
     }
 }

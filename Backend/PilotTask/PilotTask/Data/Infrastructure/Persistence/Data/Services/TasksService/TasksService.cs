@@ -3,6 +3,7 @@ using PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IRepositories.IP
 using PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IRepositories.ITasksRepository;
 using PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IServices.ITasksService;
 using PilotTask.Models;
+using System.Threading.Tasks;
 
 namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.TasksService
 {
@@ -25,41 +26,44 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.TasksService
             {
                 this.logger.LogInformation($"[TasksService:CreateTask] Event Received");
 
-                return new Tasks();
+                var res = await this.tasksWriteRepository.CreateTaskDataAsync(task);
+                return res;
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksService:CreateTask] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksService:CreateTask] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
 
-        public async Task<Tasks?> UpdateTask(int taskId, TaskModel task)
+        public async Task<bool?> UpdateTask(int taskId, TaskModel task)
         {
             try
             {
                 this.logger.LogInformation($"[TasksService:UpdateTask] Event Received");
 
-                return new Tasks();
+                var res = await this.tasksWriteRepository.UpdateTaskDataAsync(taskId, task);
+                return res;
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksService:UpdateTask] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksService:UpdateTask] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
 
-        public async Task<Tasks?> DeleteTask(int taskId)
+        public async Task<bool?> DeleteTask(int taskId)
         {
             try
             {
                 this.logger.LogInformation($"[TasksService:DeleteTask] Event Received");
 
-                return new Tasks();
+                var res = await this.tasksWriteRepository.DeleteTaskDataAsync(taskId);
+                return res;
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksService:DeleteTask] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksService:DeleteTask] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -70,11 +74,12 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.TasksService
             {
                 this.logger.LogInformation($"[TasksService:RetriveTasks] Event Received");
 
-                return new List<Tasks>();
+                var res = await this.tasksReadRepository.GetTaskDataAsync();
+                return res;
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksService:RetriveTasks] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksService:RetriveTasks] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -85,11 +90,12 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.TasksService
             {
                 this.logger.LogInformation($"[TasksService:RetriveTasks] Event Received");
 
-                return new Tasks();
+                var res = await this.tasksReadRepository.GetTaskDataAsync(taskId);
+                return res;
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksService:RetriveTasks] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksService:RetriveTasks] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }
@@ -105,7 +111,7 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.TasksService
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksService:RetriveTasksByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksService:RetriveTasksByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
                 return null;
             }
         }

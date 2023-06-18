@@ -43,7 +43,7 @@ namespace PilotTask.Controllers
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksController:GetTasks] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksController:GetTasks] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<GetTasksViewModel>.Fail(ex.Message));
             }
         }
@@ -69,7 +69,7 @@ namespace PilotTask.Controllers
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksController:GetTasksByTaskId] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksController:GetTasksByTaskId] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<GetTasksByTaskIdViewModel>.Fail(ex.Message));
             }
         }
@@ -95,7 +95,7 @@ namespace PilotTask.Controllers
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksController:CreateTasks] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksController:CreateTasks] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<CreateTaskViewModel>.Fail(ex.Message));
             }
         }
@@ -105,23 +105,25 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.tasksService.UpdateTask(taskId, task);
-                if (result != null)
-                {
-                    var response = new UpdateTaskViewModel
-                    {
-                        Task = result
-                    };
-                    return Ok(ResponseWrapper<UpdateTaskViewModel>.Success("Task updated successfully", response));
-                }
-                else
-                {
-                    return BadRequest(ResponseWrapper<UpdateTaskViewModel>.Fail("Failed to update task"));
-                }
+                //var result = await this.tasksService.UpdateTask(taskId, task);
+                //if (result != null)
+                //{
+                //    var response = new UpdateTaskViewModel
+                //    {
+                //        Task = result
+                //    };
+                //    return Ok(ResponseWrapper<UpdateTaskViewModel>.Success("Task updated successfully", response));
+                //}
+                //else
+                //{
+                //    return BadRequest(ResponseWrapper<UpdateTaskViewModel>.Fail("Failed to update task"));
+                //}
+
+                return Ok();
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksController:UpdateTasks] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksController:UpdateTasks] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<UpdateTaskViewModel>.Fail(ex.Message));
 
             }
@@ -132,23 +134,25 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.tasksService.DeleteTask(taskId);
-                if (result != null)
-                {
-                    var response = new DeleteTaskViewModel
-                    {
-                        Task = result
-                    };
-                    return Ok(ResponseWrapper<DeleteTaskViewModel>.Success("Task deleted successfully", response));
-                }
-                else
-                {
-                    return BadRequest(ResponseWrapper<DeleteTaskViewModel>.Fail("Failed to delete task"));
-                }
+                //var result = await this.tasksService.DeleteTask(taskId);
+                //if (result != null)
+                //{
+                //    var response = new DeleteTaskViewModel
+                //    {
+                //        Task = result
+                //    };
+                //    return Ok(ResponseWrapper<DeleteTaskViewModel>.Success("Task deleted successfully", response));
+                //}
+                //else
+                //{
+                //    return BadRequest(ResponseWrapper<DeleteTaskViewModel>.Fail("Failed to delete task"));
+                //}
+
+                return Ok();
             }
             catch (Exception ex)
             {
-                this.logger.LogDebug($"[TasksController:DeleteTasks] Exception occurred: Inner exception: {ex.InnerException}");
+                this.logger.LogInformation($"[TasksController:DeleteTasks] Exception occurred: Inner exception: {ex.InnerException}");
                 return BadRequest(ResponseWrapper<DeleteTaskViewModel>.Fail(ex.Message));
             }
         }
