@@ -22,15 +22,11 @@ namespace PilotTask.Controllers
     public class ProfilesController : ControllerBase
     {
         private readonly ILogger<ProfilesController> logger;
-        private readonly IProfilesService profilesService;
-        private readonly ITasksService tasksService;
         private readonly IMediator mediator;
 
-        public ProfilesController(ILogger<ProfilesController> logger, IProfilesService profilesService, ITasksService tasksService, IMediator mediator)
+        public ProfilesController(ILogger<ProfilesController> logger, IMediator mediator)
         {
             this.logger = logger;
-            this.profilesService = profilesService;
-            this.tasksService = tasksService;
             this.mediator = mediator;
         }
 
@@ -54,7 +50,7 @@ namespace PilotTask.Controllers
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[ProfilesController:GetProfiles] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<GetProfilesViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<GetProfilesResponse>.Fail(ex.Message));
             }
         }
 
@@ -80,7 +76,7 @@ namespace PilotTask.Controllers
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[ProfilesController:GetProfilesByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<GetProfilesByProfileIdViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<GetProfilesByProfileIdResponse>.Fail(ex.Message));
             }
         }
 
@@ -111,7 +107,7 @@ namespace PilotTask.Controllers
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[ProfilesController:CreateProfiles] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<CreateProfileViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<CreateProfilesResponse>.Fail(ex.Message));
             }
         }
 
@@ -143,7 +139,7 @@ namespace PilotTask.Controllers
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[ProfilesController:UpdateProfiles] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ex.Message);
+                return BadRequest(ResponseWrapper<UpdateProfilesResponse>.Fail(ex.Message));
             }
         }
 
@@ -170,7 +166,7 @@ namespace PilotTask.Controllers
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[ProfilesController:DeleteProfiles] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ex.Message);
+                return BadRequest(ResponseWrapper<DeleteProfilesResponse>.Fail(ex.Message));
             }
         }
 
@@ -197,7 +193,7 @@ namespace PilotTask.Controllers
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[ProfilesController:GetTasksByProfileId] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<GetTasksViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<GetTasksByProfileIdResponse>.Fail(ex.Message));
             }
         }
     }

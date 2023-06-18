@@ -1,7 +1,8 @@
-﻿namespace PilotTask.Models
+﻿namespace PilotTask.Data.Application.Commands.Tasks.UpdateTasks
 {
-    public class TaskModel
+    public class UpdateTasksCommand
     {
+        public int TaskId { get; set; }
         public int ProfileId { get; set; }
         public string? TaskName { get; set; }
         public string? TaskDescription { get; set; }

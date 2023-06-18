@@ -1,11 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MassTransit.Mediator;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PilotTask.Data.Application.Commands.Tasks.CreateTasks;
+using PilotTask.Data.Application.Commands.Tasks.DeleteTasks;
+using PilotTask.Data.Application.Commands.Tasks.UpdateTasks;
+using PilotTask.Data.Application.Queries.Profiles.GetProfiles;
+using PilotTask.Data.Application.Queries.Tasks.GetTasksByTaskId;
 using PilotTask.Data.Entities;
 using PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IServices.IProfilesService;
 using PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IServices.ITasksService;
 using PilotTask.Models;
 using PilotTask.Views;
 using PilotTask.Wrappers.ResponseWrapper;
+using System.Threading.Tasks;
 
 namespace PilotTask.Controllers
 {
@@ -14,38 +21,12 @@ namespace PilotTask.Controllers
     public class TasksController : ControllerBase
     {
         private readonly ILogger<TasksController> logger;
-        private readonly ITasksService tasksService;
+        private readonly IMediator mediator;
 
-        public TasksController(ILogger<TasksController> logger, ITasksService tasksService)
+        public TasksController(ILogger<TasksController> logger, IMediator mediator)
         {
             this.logger = logger;
-            this.tasksService = tasksService;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetTasks()
-        {
-            try
-            {
-                var result = await this.tasksService.RetriveTasks();
-                if (result != null)
-                {
-                    var response = new GetTasksViewModel
-                    {
-                        Tasks = (result.Count > 0) ? result.ToList() : new List<Tasks>()
-                    };
-                    return Ok(ResponseWrapper<GetTasksViewModel>.Success("Tasks get successfully", response));
-                }
-                else
-                {
-                    return BadRequest(ResponseWrapper<GetTasksViewModel>.Fail("Failed to get tasks details"));
-                }
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogInformation($"[TasksController:GetTasks] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<GetTasksViewModel>.Fail(ex.Message));
-            }
+            this.mediator = mediator;
         }
 
         [HttpGet("{taskId}")]
@@ -53,24 +34,24 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.tasksService.RetriveTasks(taskId);
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<GetTasksByTaskIdQuery>();
+                var response = await client.GetResponse<ResponseWrapper<GetTasksByTaskIdResponse>>(new GetTasksByTaskIdQuery {
+                    TaskId = taskId
+                });
+
+                if (response.Message.Succeeded)
                 {
-                    var response = new GetTasksByTaskIdViewModel
-                    {
-                        Task = result
-                    };
-                    return Ok(ResponseWrapper<GetTasksByTaskIdViewModel>.Success("Task get successfully", response));
+                    return Ok(response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<GetTasksByTaskIdViewModel>.Fail("Failed to get task details"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[TasksController:GetTasksByTaskId] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<GetTasksByTaskIdViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<GetTasksByTaskIdResponse>.Fail(ex.Message));
             }
         }
 
@@ -79,24 +60,28 @@ namespace PilotTask.Controllers
         {
             try
             {
-                var result = await this.tasksService.CreateTask(task);
-                if (result != null)
+                var client = this.mediator.CreateRequestClient<CreateTasksCommand>();
+                var response = await client.GetResponse<ResponseWrapper<CreateTasksResponse>>(new CreateTasksCommand { 
+                    ProfileId = task.ProfileId,
+                    TaskName = task.TaskName,
+                    TaskDescription = task.TaskDescription,
+                    StartTime = task.StartTime,
+                    Status = task.Status
+                });
+
+                if (response.Message.Succeeded)
                 {
-                    var response = new CreateTaskViewModel
-                    {
-                        Task = result
-                    };
-                    return Created("", ResponseWrapper<CreateTaskViewModel>.Success("Task created successfully", response));
+                    return Ok(response.Message);
                 }
                 else
                 {
-                    return BadRequest(ResponseWrapper<CreateTaskViewModel>.Fail("Failed to create task"));
+                    return BadRequest(response.Message);
                 }
             }
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[TasksController:CreateTasks] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<CreateTaskViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<CreateTasksResponse>.Fail(ex.Message));
             }
         }
 
@@ -105,26 +90,30 @@ namespace PilotTask.Controllers
         {
             try
             {
-                //var result = await this.tasksService.UpdateTask(taskId, task);
-                //if (result != null)
-                //{
-                //    var response = new UpdateTaskViewModel
-                //    {
-                //        Task = result
-                //    };
-                //    return Ok(ResponseWrapper<UpdateTaskViewModel>.Success("Task updated successfully", response));
-                //}
-                //else
-                //{
-                //    return BadRequest(ResponseWrapper<UpdateTaskViewModel>.Fail("Failed to update task"));
-                //}
+                var client = this.mediator.CreateRequestClient<UpdateTasksCommand>();
+                var response = await client.GetResponse<ResponseWrapper<UpdateTasksResponse>>(new UpdateTasksCommand
+                {
+                    TaskId = taskId,
+                    ProfileId = task.ProfileId,
+                    TaskName = task.TaskName,
+                    TaskDescription = task.TaskDescription,
+                    StartTime = task.StartTime,
+                    Status = task.Status
+                });
 
-                return Ok();
+                if (response.Message.Succeeded)
+                {
+                    return Ok(response.Message);
+                }
+                else
+                {
+                    return BadRequest(response.Message);
+                }
             }
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[TasksController:UpdateTasks] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<UpdateTaskViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<UpdateTasksResponse>.Fail(ex.Message));
 
             }
         }
@@ -134,26 +123,25 @@ namespace PilotTask.Controllers
         {
             try
             {
-                //var result = await this.tasksService.DeleteTask(taskId);
-                //if (result != null)
-                //{
-                //    var response = new DeleteTaskViewModel
-                //    {
-                //        Task = result
-                //    };
-                //    return Ok(ResponseWrapper<DeleteTaskViewModel>.Success("Task deleted successfully", response));
-                //}
-                //else
-                //{
-                //    return BadRequest(ResponseWrapper<DeleteTaskViewModel>.Fail("Failed to delete task"));
-                //}
+                var client = this.mediator.CreateRequestClient<DeleteTasksCommand>();
+                var response = await client.GetResponse<ResponseWrapper<DeleteTasksResponse>>(new DeleteTasksCommand
+                {
+                    TaskId = taskId
+                });
 
-                return Ok();
+                if (response.Message.Succeeded)
+                {
+                    return Ok(response.Message);
+                }
+                else
+                {
+                    return BadRequest(response.Message);
+                }
             }
             catch (Exception ex)
             {
                 this.logger.LogInformation($"[TasksController:DeleteTasks] Exception occurred: Inner exception: {ex.InnerException}");
-                return BadRequest(ResponseWrapper<DeleteTaskViewModel>.Fail(ex.Message));
+                return BadRequest(ResponseWrapper<DeleteTasksResponse>.Fail(ex.Message));
             }
         }
     }

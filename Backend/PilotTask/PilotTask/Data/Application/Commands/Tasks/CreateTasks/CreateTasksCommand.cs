@@ -1,6 +1,6 @@
-﻿namespace PilotTask.Models
+﻿namespace PilotTask.Data.Application.Commands.Tasks.CreateTasks
 {
-    public class TaskModel
+    public class CreateTasksCommand
     {
         public int ProfileId { get; set; }
         public string? TaskName { get; set; }
