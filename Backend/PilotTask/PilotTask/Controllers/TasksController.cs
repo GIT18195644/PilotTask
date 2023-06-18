@@ -39,14 +39,7 @@ namespace PilotTask.Controllers
                     TaskId = taskId
                 });
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {
@@ -71,7 +64,7 @@ namespace PilotTask.Controllers
 
                 if (response.Message.Succeeded)
                 {
-                    return Ok(response.Message);
+                    return Created(response.Message.Message, response.Message);
                 }
                 else
                 {
@@ -101,14 +94,7 @@ namespace PilotTask.Controllers
                     Status = task.Status
                 });
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {
@@ -129,14 +115,7 @@ namespace PilotTask.Controllers
                     TaskId = taskId
                 });
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {

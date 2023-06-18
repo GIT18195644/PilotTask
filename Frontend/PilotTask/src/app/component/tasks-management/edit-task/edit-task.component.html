@@ -1,0 +1,12 @@
+<h1>EDIT TASK</h1>
+<hr>
+<div>
+    <input [(ngModel)]="task.profileId" ngModel #profileId name="profileId" type="number" placeholder="Profile ID"
+        required>
+    <input [(ngModel)]="task.taskName" ngModel #taskName name="taskName" placeholder="Task Name" required>
+    <textarea [(ngModel)]="task.taskDescription" #taskDescription ngModel name="taskDescription"
+        placeholder="Task Description" required></textarea>
+    <input [(ngModel)]="task.startTime" ngModel #startTime name="startTime" type="datetime-local" required>
+    <input [(ngModel)]="task.status" ngModel #status name="status" type="number" placeholder="Status" required>
+    <button (click)="submitForm(task)">SAVE</button>
+</div>

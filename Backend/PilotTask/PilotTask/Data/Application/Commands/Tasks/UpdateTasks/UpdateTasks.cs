@@ -30,28 +30,36 @@ namespace PilotTask.Data.Application.Commands.Tasks.UpdateTasks
                 var result = await this.tasksService.RetriveTasks(context.Message.TaskId);
                 if (result != null && result.Id != null)
                 {
-                    var task = new TaskModel
+                    var profileResult = await this.profilesService.RetriveProfiles(context.Message.ProfileId);
+                    if (profileResult != null && profileResult.ProfileId != null)
                     {
-                        ProfileId = context.Message.ProfileId,
-                        TaskName = context.Message.TaskName,
-                        TaskDescription = context.Message.TaskDescription,
-                        StartTime = context.Message.StartTime,
-                        Status = context.Message.Status
-                    };
-
-                    var data = await this.tasksService.UpdateTask(context.Message.TaskId, task);
-                    if (data != null)
-                    {
-                        var response = new UpdateTasksResponse
+                        var task = new TaskModel
                         {
-                            Value = data
+                            ProfileId = context.Message.ProfileId,
+                            TaskName = context.Message.TaskName,
+                            TaskDescription = context.Message.TaskDescription,
+                            StartTime = context.Message.StartTime,
+                            Status = context.Message.Status
                         };
 
-                        await context.RespondAsync(ResponseWrapper<UpdateTasksResponse>.Success("Task updated successfully.", response));
+                        var data = await this.tasksService.UpdateTask(context.Message.TaskId, task);
+                        if (data != null)
+                        {
+                            var response = new UpdateTasksResponse
+                            {
+                                Value = data
+                            };
+
+                            await context.RespondAsync(ResponseWrapper<UpdateTasksResponse>.Success("Task updated successfully.", response));
+                        }
+                        else
+                        {
+                            await context.RespondAsync(ResponseWrapper<UpdateTasksResponse>.Fail("Failed to update task."));
+                        }
                     }
                     else
                     {
-                        await context.RespondAsync(ResponseWrapper<UpdateTasksResponse>.Fail("Failed to update task."));
+                        await context.RespondAsync(ResponseWrapper<UpdateTasksResponse>.Fail("Invalid profile id."));
                     }
                 }
                 else

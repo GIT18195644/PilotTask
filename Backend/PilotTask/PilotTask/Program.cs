@@ -21,6 +21,35 @@ try
     // Add services to the container.
     builder.Services.AddControllers();
 
+    var allowedHosts = builder.Configuration.GetValue(typeof(string), "AllowedHosts") as string;
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(
+            builder =>
+            {
+                if (allowedHosts == null || allowedHosts == "*")
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                    return;
+                }
+                string[] hosts;
+                if (allowedHosts.Contains(';'))
+                    hosts = allowedHosts.Split(';');
+                else
+                {
+                    hosts = new string[1];
+                    hosts[0] = allowedHosts;
+                }
+                builder.WithOrigins(hosts)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            });
+    });
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
 
@@ -40,6 +69,13 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+
+    //Configure cors
+    app.UseCors(x => x
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .SetIsOriginAllowed(origin => true)
+           .AllowCredentials());
 
     app.UseForwardedHeaders();
 

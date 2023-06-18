@@ -46,7 +46,7 @@ namespace PilotTask.Data.Application.Commands.Tasks.DeleteTasks
                 }
                 else
                 {
-                    await context.RespondAsync(ResponseWrapper<UpdateTasksResponse>.Fail("Invalid task id."));
+                    await context.RespondAsync(ResponseWrapper<DeleteTasksResponse>.Fail("Invalid task id."));
                 }
             }
             catch (Exception ex)

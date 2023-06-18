@@ -38,14 +38,7 @@ namespace PilotTask.Controllers
                 var client = this.mediator.CreateRequestClient<GetProfilesQuery>();
                 var response = await client.GetResponse<ResponseWrapper<GetProfilesResponse>>(new GetProfilesQuery {});
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {
@@ -64,14 +57,7 @@ namespace PilotTask.Controllers
                     ProfileId = profileId
                 });
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {
@@ -127,14 +113,7 @@ namespace PilotTask.Controllers
                     DateOfBirth = profile.DateOfBirth
                 });
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {
@@ -154,14 +133,7 @@ namespace PilotTask.Controllers
                     ProfileId = profileId
                 });
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {
@@ -181,14 +153,7 @@ namespace PilotTask.Controllers
                     ProfileId = profileId
                 });
 
-                if (response.Message.Succeeded)
-                {
-                    return Ok(response.Message);
-                }
-                else
-                {
-                    return BadRequest(response.Message);
-                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {

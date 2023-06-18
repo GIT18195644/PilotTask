@@ -1,0 +1,11 @@
+<h1>EDIT PROFILE</h1>
+<hr>
+<div>
+    <input [(ngModel)]="profile.firstName" ngModel #firstName name="firstName" placeholder="First Name" required>
+    <input [(ngModel)]="profile.lastName" ngModel #lastName name="lastName" placeholder="Last Name" required>
+    <input [(ngModel)]="profile.dateOfBirth" ngModel #dateOfBirth name="dateOfBirth" type="datetime-local" required>
+    <input [(ngModel)]="profile.phoneNumber" ngModel #phoneNumber name="phoneNumber" placeholder="Phone Number"
+        required>
+    <input [(ngModel)]="profile.emailId" ngModel #emailId name="emailId" type="email" placeholder="Email" required>
+    <button (click)="submitForm(profile)">SAVE</button>
+</div>
