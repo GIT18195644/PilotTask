@@ -156,11 +156,11 @@ namespace PilotTask.Controllers
         }
 
         [HttpGet("{profileId}/tasks")]
-        public async Task<IActionResult> GetTasksByProfileId()
+        public async Task<IActionResult> GetTasksByProfileId(int profileId)
         {
             try
             {
-                var result = await this.tasksService.RetriveTasks();
+                var result = await this.tasksService.RetriveTasksByProfileId(profileId);
                 if (result != null)
                 {
                     var response = new GetTasksViewModel

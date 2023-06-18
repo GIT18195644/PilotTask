@@ -6,5 +6,6 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Interfaces.IRepositorie
     {
         public Task<List<Tasks>?> GetTaskDataAsync();
         public Task<Tasks?> GetTaskDataAsync(int taskId);
+        public Task<List<Tasks>?> GetTaskByProfileIdDataAsync(int profileId);
     }
 }

@@ -100,7 +100,8 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.TasksService
             {
                 this.logger.LogInformation($"[TasksService:RetriveTasksByProfileId] Event Received");
 
-                return new List<Tasks>();
+                var res = await this.tasksReadRepository.GetTaskByProfileIdDataAsync(profileId);
+                return res;
             }
             catch (Exception ex)
             {

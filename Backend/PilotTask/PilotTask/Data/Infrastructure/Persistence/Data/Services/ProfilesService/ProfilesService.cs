@@ -24,7 +24,8 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             {
                 this.logger.LogInformation($"[ProfilesService:CreateProfile] Event Received");
 
-                return new Profiles();
+                var res = await this.profilesWriteRepository.CreateProfileDataAsync(profile);
+                return res;
             }
             catch (Exception ex)
             {
@@ -39,7 +40,8 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             {
                 this.logger.LogInformation($"[ProfilesService:UpdateProfile] Event Received");
 
-                return new Profiles();
+                var res = await this.profilesWriteRepository.UpdateProfileDataAsync(profileId, profile);
+                return res;
             }
             catch (Exception ex)
             {
@@ -54,7 +56,8 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             {
                 this.logger.LogInformation($"[ProfilesService:DeleteProfile] Event Received");
 
-                return new Profiles();
+                var res = await this.profilesWriteRepository.DeleteProfileDataAsync(profileId);
+                return res;
             }
             catch (Exception ex)
             {
@@ -69,7 +72,8 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             {
                 this.logger.LogInformation($"[ProfilesService:RetriveProfiles] Event Received");
 
-                return new List<Profiles>();
+                var res = await this.profilesReadRepository.GetProfileDataAsync();
+                return res;
             }
             catch (Exception ex)
             {
@@ -84,7 +88,8 @@ namespace PilotTask.Data.Infrastructure.Persistence.Data.Services.ProfilesServic
             {
                 this.logger.LogInformation($"[ProfilesService:RetriveProfiles:profileId] Event Received");
 
-                return new Profiles();
+                var res = await this.profilesReadRepository.GetProfileDataAsync(profileId);
+                return res;
             }
             catch (Exception ex)
             {

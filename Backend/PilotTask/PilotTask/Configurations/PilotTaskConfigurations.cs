@@ -15,20 +15,10 @@ namespace PilotTask.Configurations
     {
         public static void AddPilotTaskServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
         {
-            if (environment.IsProduction())
+            services.AddDbContext<PilotTaskDbContext>(opt =>
             {
-                services.AddDbContext<PilotTaskDbContext>(opt =>
-                {
-                    opt.UseSqlServer(configuration["ConnectionStrings:ProdConnection"]);
-                });
-            }
-            else
-            {
-                services.AddDbContext<PilotTaskDbContext>(opt =>
-                {
-                    opt.UseSqlServer(configuration["ConnectionStrings:DevConnection"]);
-                });
-            }
+                opt.UseSqlServer(configuration["ConnectionStrings:Connection"]);
+            });
 
             services.AddScoped<IProfilesReadRepository, ProfilesReadRepository>();
             services.AddScoped<IProfilesWriteRepository, ProfilesWriteRepository>();
