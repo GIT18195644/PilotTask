@@ -8,5 +8,6 @@
         placeholder="Task Description" required></textarea>
     <input [(ngModel)]="task.startTime" ngModel #startTime name="startTime" type="datetime-local" required>
     <input [(ngModel)]="task.status" ngModel #status name="status" type="number" placeholder="Status" required>
-    <button (click)="submitForm(task)">SAVE</button>
+    <button (click)="submitForm(task)"
+        [disabled]="!task.taskName || !task.taskDescription || !task.startTime || !task.status">SAVE</button>
 </div>

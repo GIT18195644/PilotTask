@@ -7,5 +7,6 @@
     <input [(ngModel)]="profile.phoneNumber" ngModel #phoneNumber name="phoneNumber" placeholder="Phone Number"
         required>
     <input [(ngModel)]="profile.emailId" ngModel #emailId name="emailId" type="email" placeholder="Email" required>
-    <button (click)="submitForm(profile)">SAVE</button>
+    <button (click)="submitForm(profile)"
+        [disabled]="!profile.firstName || !profile.lastName || !profile.dateOfBirth || !profile.phoneNumber || !profile.emailId">SAVE</button>
 </div>
